@@ -1,27 +1,28 @@
-# Concept
-# 1) User provides paths to handbrake, ffmpeg, gcloud
-# 2) Scan input MKV for title_*.mkv
-# 3) For each MKV, in parallel:
-#   * Rename to allow new mkv rips (title_* -> title_*.inprogress.{date}.mkv)
-#   * Use ffmpeg to copy the first 10 minutes of the container to an mp4 temp file
-#   * Upload to a temporary gcloud path
-#   * Submit to google OCR and poll results
-#   * Look episode title text. Ie: After the intro, before director. Name present in episode CSV
-#   * Use detected title to set episode number and destination path
-#   * Match episode number, and retitle arguments to set official title and encoding quality
-#   * Stage directories and submit to handbrake "pool" for encoding
-# 4) Handbrake "pool": single threaded work queue which encodes original mkv to m4v in final directory
+"""
+Plex TV Import Automation
+Title detection and automatic transcoding
 
+Author: Aaron Graubert 2022
 
-# This process is probably much slower than before, but should allow a fairly hands-off import
-# Other notes:
-# * Check timing of GCP vs local tesseract.
-#   Local tesseract seems very slow
-# * Regarding confidence, select text with the median segment confidence > 90
-#   and join with the episode list. If there are multiple matches prompt for user input
-# * Consider an episode window to restrict legal set of episode titles
-# * Consider a multi-tier approach. First attempt a title scan of first 5 minutes, then minute 4-10
-# * Build using asyncio?
+------
+
+This script is designed to start by grabbing one or more anonymous files freshly
+ripped from a DVD/BluRay, automatically detect their titles, rename the files
+appropriately, generate appropriate handbrake encoding arguments, and then either
+transcode the files or dump a batch script for future transcoding.
+
+Each input MKV file goes through the following stages
+1) Files are renamed temporarily so as not to conflict with fresh rips
+2) FFMPEG is used to cut out the bottom half of the frame of minutes 2-4 of the video
+3) That cut is uploaded to Google Cloud Storage
+4) Google Cloud VideoIntelligence is used to detect text present in the cut
+5) Any text detected with high enough confidence is cross-referenced with a user-provided list of expected episode titles
+6) If no match is found, the script repeats steps 2-5 for several different time slices within the first 10 minutes.
+    If no match is found after checking all of the first 10 minutes, the script prompts the user to manually provide the information
+7) If a match is found, the match is used to assign season and episode numbers to the file
+8) The file is renamed to reflect it's detected name
+9) Handbrake is invoked, or handbrake arguments are written to file
+"""
 
 import asyncio
 import tvlib
@@ -128,7 +129,7 @@ class Taskmaster(object):
         for arg in args:
             conf_dict[arg] = None
         async with aiofiles.open(filename, 'w') as w:
-            await w.write(json.dumps(conf_dict))
+            await w.write(json.dumps(conf_dict, indent=2))
         while not conf_dict['ready_to_import']:
             await asyncio.sleep(5)
             try:
