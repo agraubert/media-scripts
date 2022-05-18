@@ -211,7 +211,7 @@ def gcloud_annotate(gs_path, confidence_threshold=0.9, user_project=None):
     while not operation.done():
         i += 1
         try:
-            result = operation.result(timeout=min(300, 30 + (2**i) + random.randint(0, 10)))
+            result = operation.result(timeout=min(120, (2**i) + random.randint(10, 30)))
         except:
             continue
         return [
