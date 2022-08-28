@@ -1,0 +1,5 @@
+numpy
+aiofiles
+pandas
+google-cloud-storage
+google-cloud-videointelligence

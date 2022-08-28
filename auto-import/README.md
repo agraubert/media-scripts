@@ -33,7 +33,7 @@ Options:
 
 - mediadir: The destination media folder. Media will be saved in $MediaDir/TV/
 - show: The name of the Show
-- season: The season number. Episodes will be saved in $MediaDir/TV/$Show/Season $Season/
+- ~~season: The season number. Episodes will be saved in $MediaDir/TV/$Show/Season $Season/~~
 - device: The makemkvcon device ID to read from
 - transcode-preset: The handbrake transcoding preset name. For a custom UI preset, this should be in presetPath:presetName format
 - episodes: A TSV file containing 'season', 'episode', and 'title' columns. Used to filter names for title detection
