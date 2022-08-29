@@ -51,7 +51,7 @@ class TVProfile(AbstractProfile):
 		self.project = args.project
 
 	def _import(self):
-		os.mkdir(os.path.join(self.tempdir), 'profile_staging')
+		os.mkdir(os.path.join(self.tempdir, 'profile_staging'))
 		for f in self.input:
 			os.link(
 				f,
