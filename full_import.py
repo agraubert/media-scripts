@@ -238,7 +238,7 @@ async def ffmpeg_copy(ffmpeg, input_path, output_path, start_offset=0, encode_du
     Make a quick copy of a MKV container to M4V, only storing the bottom half of each frame
     """
     return await run_cmd(
-        '"{}" -i "{}" -ss {} {} -filter:v "crop=in_w:in_h/2:0:in_h/2" -c:a copy "{}"'.format(
+        '"{}" -nostdin -i "{}" -ss {} {} -filter:v "crop=in_w:in_h/2:0:in_h/2" -c:a copy "{}"'.format(
             ffmpeg,
             input_path,
             start_offset,
