@@ -207,21 +207,17 @@ def gcloud_annotate(gs_path, confidence_threshold=0.9, user_project=None):
         }
     )
 
-    i = -1
-    while not operation.done():
-        i += 1
-        try:
-            result = operation.result(timeout=min(120, (2**i) + random.randint(10, 30)))
-        except:
-            continue
-        return [
-            annotation.text
-            for annotation in result.annotation_results[0].text_annotations
-            if median([
-                segment.confidence
-                for segment in annotation.segments
-            ]) >= confidence_threshold
-        ]
+    result = operation.result()
+
+    return [
+        annotation.text
+        for annotation in result.annotation_results[0].text_annotations
+        if median([
+            segment.confidence
+            for segment in annotation.segments
+        ]) >= confidence_threshold
+    ]
+        
 
 def gsutil_rm(gs_path):
     getblob(gs_path).delete()
