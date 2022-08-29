@@ -74,7 +74,7 @@ class TVProfile(AbstractProfile):
 				self.name,
 				os.path.join(self.tempdir, 'profile_staging'),
 				os.path.join(self.output, 'TV', self.name),
-				self.transcode_preset,
+				self.preset,
 				self.episodes,
 				self.gs_path,
 				'-c',

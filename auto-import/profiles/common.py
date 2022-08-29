@@ -32,7 +32,7 @@ class AbstractProfile(abc.ABC):
 			else:
 				raise ValueError('Invalid extraction mode')
 		self.mediadir = args.mediadir
-		self.transcode_preset = args.transcode_preset
+		self.preset = args.preset
 		self.makemkvcon = args.makemkvcon
 		self.handbrakecli = args.handbrakecli
 		self.tempdir_base = args.tempdir
