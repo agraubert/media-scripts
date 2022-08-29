@@ -1,5 +1,6 @@
 import argparse
 import re
+from .profiles.tv import TVProfile
 
 def regex_type(pattern, groups):
 
@@ -11,7 +12,9 @@ def regex_type(pattern, groups):
 	
 	return parser
 
-profiles = {}
+profiles = {
+	'tv': TVProfile
+}
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser('auto-import-media')
