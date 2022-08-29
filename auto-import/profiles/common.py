@@ -38,7 +38,7 @@ class AbstractProfile(abc.ABC):
 		self.tempdir = None
 		self.stack = None
 
-	@abc.abstractclassmethod
+	@abc.abstractstaticmethod
 	def configure_subparser(parser):
 		"""
 		Given a parser object, add required options for this profile

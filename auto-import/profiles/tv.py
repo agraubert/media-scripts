@@ -4,7 +4,7 @@ import sys
 import os
 
 class TVProfile(AbstractProfile):
-	@classmethod
+	@staticmethod
 	def configure_subparser(parser):
 		parser.add_argument(
 			'episodes',
