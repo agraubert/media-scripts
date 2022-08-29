@@ -63,15 +63,16 @@ class AbstractProfile(abc.ABC):
 		"""
 		self.stack = ExitStack()
 		self.stack.__enter__()
-		self.stack.enter_context(tempfile.TemporaryDirectory(dir=self.tempdir_base))
+		self.tempdir = self.stack.enter_context(tempfile.TemporaryDirectory(dir=self.tempdir_base))
 	
-	def __exit__(self, a, b, c):
+	def __exit__(self, exc_type, exc_val, exc_tb):
 		"""
 		Cleans up temporary resources.
 		Classes overriding this method should call this method **AFTER** running their own code
 		"""
-		self.stack.__exit__()
+		self.stack.__exit__(exc_type, exc_val, exc_tb)
 		self.stack = None
+		self.tempdir = None
 		
 	@abc.abstractmethod
 	def _import(self):
