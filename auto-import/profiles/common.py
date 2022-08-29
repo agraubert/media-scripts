@@ -15,21 +15,22 @@ class AbstractProfile(abc.ABC):
 		self.input = args.input
 		self.name = args.name
 		self.mkv_extraction_mode = args.extraction_mode.lower() if args.extraction_mode is not None else None
-		if self.mkv_extraction_mode.startswith('count:'):
-			match = countn_p.match(self.mkv_extraction_mode)
-			if not match:
-				raise ValueError("count:n extraction mode invalid format")
-			self.mkv_extraction_mode = ('count', int(match.group(1)))
-		elif self.mkv_extraction_mode.startswith('name:'):
-			match = name_p.match(self.mkv_extraction_mode)
-			if not match:
-				raise ValueError('name:title extraction mode invalid format')
-			self.mkv_extraction_mode = ('name', *match.group(1).split(','))
-		elif self.mkv_extraction_mode in {'1gb', 'median', 'all'}:
-			# Convert to tuple for compatibility with other modes
-			self.mkv_extraction_mode = (self.mkv_extraction_mode,)
-		elif self.mkv_extraction_mode is not None:
-			raise ValueError('Invalid extraction mode')
+		if self.mkv_extraction_mode is not None:
+			if self.mkv_extraction_mode.startswith('count:'):
+				match = countn_p.match(self.mkv_extraction_mode)
+				if not match:
+					raise ValueError("count:n extraction mode invalid format")
+				self.mkv_extraction_mode = ('count', int(match.group(1)))
+			elif self.mkv_extraction_mode.startswith('name:'):
+				match = name_p.match(self.mkv_extraction_mode)
+				if not match:
+					raise ValueError('name:title extraction mode invalid format')
+				self.mkv_extraction_mode = ('name', *match.group(1).split(','))
+			elif self.mkv_extraction_mode in {'1gb', 'median', 'all'}:
+				# Convert to tuple for compatibility with other modes
+				self.mkv_extraction_mode = (self.mkv_extraction_mode,)
+			else:
+				raise ValueError('Invalid extraction mode')
 		self.mediadir = args.mediadir
 		self.transcode_preset = args.transcode_preset
 		self.makemkvcon = args.makemkvcon
