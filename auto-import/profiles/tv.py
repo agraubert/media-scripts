@@ -78,7 +78,7 @@ class TVProfile(AbstractProfile):
 				self.episodes,
 				self.gs_path,
 				'-c',
-				self.confidence,
+				str(self.confidence),
 				'-f',
 				self.ffmpeg,
 				'-b',
