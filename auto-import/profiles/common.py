@@ -14,7 +14,7 @@ class AbstractProfile(abc.ABC):
 	def __init__(self, args):
 		self.input = args.input
 		self.name = args.name
-		self.mkv_extraction_mode = args.extraction_mode.lower()
+		self.mkv_extraction_mode = args.extraction_mode.lower() if args.extraction_mode is not None else None
 		if self.mkv_extraction_mode.startswith('count:'):
 			match = countn_p.match(self.mkv_extraction_mode)
 			if not match:
