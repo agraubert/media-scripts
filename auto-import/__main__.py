@@ -43,7 +43,8 @@ if __name__ == '__main__':
 	parent.add_argument(
 		'transcode-preset',
 		help="Path to, and name of, a handbrake prset json file. Should be in filepath:presetName format",
-		type=regex_type(re.compile('(.+):(.+)'), 2)
+		type=regex_type(re.compile('(.+):(.+)'), 2),
+		dest='transcode_preset'
 	)
 
 	
