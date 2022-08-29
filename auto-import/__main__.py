@@ -7,7 +7,7 @@ def regex_type(pattern, groups):
 	def parser(arg):
 		match = pattern.match(arg)
 		if match is not None:
-			return (match.group(group+1) for group in range(groups))
+			return [*(match.group(group+1) for group in range(groups))]
 		raise ValueError("Invalid format. Expected {}".format(pattern))
 	
 	return parser
@@ -17,36 +17,38 @@ profiles = {
 }
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser('auto-import-media')
-
-	parser.add_argument(
-		'name',
-		help='Movie/Show name'
+	parser = argparse.ArgumentParser(
+		description="Automated media import script. Select a import profile for detailed help"
 	)
+	subparsers = parser.add_subparsers(dest='profile', required=True)
 
-	parser.add_argument(
-		'mediadir',
-		help="Destination root media folder. Output media will usually be stored in a subdirectory from this folder based on the selected import profile"
-	)
+	parent = argparse.ArgumentParser(add_help=False)
 
-	parser.add_argument(
-		'transcode-preset',
-		help="Path to, and name of, a handbrake prset json file. Should be in filepath:presetName format",
-		type=regex_type(re.compile('(.+):(.+)'), 2)
-	)
-
-	subparsers = parser.add_subparsers(dest='profile')
-
-	parser.add_argument(
+	parent.add_argument(
 		'input',
 		help='Input media file(s)',
 		nargs="+"
 	)
 
-	for name, profile in profiles.items():
-		profile.configure_subparser(subparsers.add_parser(name))
+	parent.add_argument(
+		'name',
+		help='Movie/Show name'
+	)
 
-	parser.add_argument(
+	parent.add_argument(
+		'mediadir',
+		help="Destination root media folder. Output media will usually be stored in a subdirectory from this folder based on the selected import profile"
+	)
+
+	parent.add_argument(
+		'transcode-preset',
+		help="Path to, and name of, a handbrake prset json file. Should be in filepath:presetName format",
+		type=regex_type(re.compile('(.+):(.+)'), 2)
+	)
+
+	
+
+	parent.add_argument(
 		'-e', '--extraction-mode',
 		help='If this is set, the "input" filepath(s) are interpreted as paths to optical media devices.'
 		' MakeMKV will be used to extract the actual input files from these devices. If this flag is set'
@@ -58,23 +60,28 @@ if __name__ == '__main__':
 		' all : Extract all titles (not recommended)'
 	)
 
-	parser.add_argument(
+	parent.add_argument(
 		'-t', '--tempdir',
 		help='Path where importer should stage temporary files. Default: system default temp location',
 		default=None
 	)
 
-	parser.add_argument(
+	parent.add_argument(
 		'--makemkvcon',
 		help='Path to makemkvcon executable. By default, "makemkvcon" is assumed to be on PATH',
 		default='makemkvcon'
 	)
 
-	parser.add_argument(
+	parent.add_argument(
 		'--handbrakecli',
 		help='Path to handbrakecli executable. By default, "handbrakecli" is assumed to be on PATH',
 		default='handbrakecli'
 	)
+
+	for name, profile in profiles.items():
+		profile.configure_subparser(subparsers.add_parser(name, parents=[parent]))
+
+	
 
 	args = parser.parse_args()
 	profiles[args.profile](args).import_media()
