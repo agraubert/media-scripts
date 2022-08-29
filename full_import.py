@@ -179,16 +179,16 @@ async def _detect_title(taskmaster, taskid, constants, tempdir, staging_path, st
                 gs_path
             )
         )
-    try:
-        await taskmaster.log(taskid, "Starting OCR Text recognition")
-        text = await taskmaster.dispatch(
-            gcloud_annotate,
-            gs_path,
-            constants['confidence'],
-            constants['user-project']
-        )
-    finally:
-        await taskmaster.dispatch(gsutil_rm, gs_path)
+        try:
+            await taskmaster.log(taskid, "Starting OCR Text recognition")
+            text = await taskmaster.dispatch(
+                gcloud_annotate,
+                gs_path,
+                constants['confidence'],
+                constants['user-project']
+            )
+        finally:
+            await taskmaster.dispatch(gsutil_rm, gs_path)
     await taskmaster.log(taskid, "Attempting to match detected text with episode titles")
     return select_episode(constants['episodes'], text)
 
@@ -391,8 +391,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '--gcloud-limit',
         type=int,
-        help="Limit for concurrent gcloud upload tasks. This does not effect concurrent OCR tasks. Default: 3",
-        default=3
+        help="Limit for concurrent gcloud upload tasks. This does not effect concurrent OCR tasks. Default: 2 (max)",
+        default=2
     )
     parser.add_argument(
         '--ffmpeg-limit',
@@ -415,6 +415,9 @@ if __name__ == '__main__':
 
     if args.confidence > 1 or args.confidence < 0:
         raise ValueError("Confidence must be a float in [0, 1]")
+
+    if args.gcloud_limit > 2:
+        print("Warning: Videointelligence API limits to <3 concurrent analyses per minute.")
 
     constants = {
         'confidence': args.confidence,
