@@ -3,3 +3,4 @@ aiofiles
 pandas
 google-cloud-storage
 google-cloud-videointelligence
+grpcio

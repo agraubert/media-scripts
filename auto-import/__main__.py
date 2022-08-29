@@ -42,8 +42,8 @@ if __name__ == '__main__':
 
 	parent.add_argument(
 		'preset',
-		help="Path to, and name of, a handbrake preset json file. Should be in filepath:presetName format",
-		type=regex_type(re.compile('(.+):(.+)'), 2),
+		help="Path to handbrake preset json file. Should contain exactly one handbrake preset",
+		# type=regex_type(re.compile('(.+):(.+)'), 2),
 	)
 
 	
