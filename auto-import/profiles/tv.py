@@ -84,7 +84,10 @@ class TVProfile(AbstractProfile):
 				'-b',
 				self.handbrakecli,
 				'-m',
-				'-p',
-				self.project,
-			]
+			] + (
+				['-p', self.project]
+				if self.project is not None
+				else
+				[]
+			)
 		)
