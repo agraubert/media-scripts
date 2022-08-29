@@ -20,12 +20,6 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser('auto-import-media')
 
 	parser.add_argument(
-		'input',
-		help='Input media file(s)',
-		nargs="+"
-	)
-
-	parser.add_argument(
 		'name',
 		help='Movie/Show name'
 	)
@@ -42,6 +36,12 @@ if __name__ == '__main__':
 	)
 
 	subparsers = parser.add_subparsers(dest='profile')
+
+	parser.add_argument(
+		'input',
+		help='Input media file(s)',
+		nargs="+"
+	)
 
 	for name, profile in profiles.items():
 		profile.configure_subparser(subparsers.add_parser(name))
